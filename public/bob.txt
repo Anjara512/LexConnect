@@ -1,0 +1,269 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider     = "prisma-client-js"
+    output       = "../app/generated"
+    moduleFormat = "ESM"
+}
+
+datasource db {
+    provider = "mysql"
+
+    url = env("DATABASE_URL")
+}
+
+model User {
+    id            String    @id @default(cuid())
+    email         String    @unique
+    password      String
+    role          String
+    emailVerified DateTime?
+    image         String?
+    client        Client[]
+    lawyer        Lawyer[]
+    accounts      Account[]
+    sessions      Session[]
+    posts         Post[]
+}
+
+model Client {
+    id           String               @id @default(cuid())
+    userId       String
+    name         String
+    profession   String
+    age          Int
+    gender       String
+    friend       Friends[]
+    notification ClientNotification[]
+    client       ClientContact[]
+    localisation String
+    user         User                 @relation(fields: [userId], references: [id])
+}
+
+model Lawyer {
+    id           String              @id @default(cuid())
+    userId       String
+    name         String?
+    age          Int?
+    localisation String?
+    budget       String?
+    gender       String?
+    specialité  String?
+    diplome      Diplome[]
+    experience   Experience[]
+    Notification Notification[]
+    contrat      Contrat[]
+    calendar     Calendar[]
+    friendLaw    FriendLaw[]
+    contact      Contact[]
+    conseil      ConseilJuridique[]
+    redaction    Redaction[]
+    resolution   ResolutionLitige[]
+    services     ServiceParDomaine[]
+    preventifs   Preventifs[]
+    valuer       ValeurAjouter[]
+    Star         Int?                @default(2)
+    user         User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ConseilJuridique {
+    id      String @id @default(cuid())
+    userId  String
+    lawyer  Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title   String
+    content String
+    desc    String
+}
+
+model Redaction {
+    id      String @id @default(cuid())
+    userId  String
+    lawyer  Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title   String
+    content String
+    desc    String
+}
+
+model ResolutionLitige {
+    id      String @id @default(cuid())
+    userId  String
+    lawyer  Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title   String
+    content String
+    desc    String
+}
+
+model ServiceParDomaine {
+    id      String @id @default(cuid())
+    userId  String
+    lawyer  Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title   String
+    content String
+    desc    String
+}
+
+model Preventifs {
+    id      String @id @default(cuid())
+    userId  String
+    lawyer  Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title   String
+    content String
+    desc    String
+}
+
+model ValeurAjouter {
+    id      String @id @default(cuid())
+    userId  String
+    lawyer  Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title   String
+    content String
+    desc    String
+}
+
+model Friends {
+    id     String @id @default(cuid())
+    userId String
+
+    client       Client @relation(fields: [userId], references: [id], onDelete: Cascade)
+    name         String
+    nbrDeContrat String
+    key          String
+}
+
+model FriendLaw {
+    id           String @id @default(cuid())
+    userId       String
+    lawyer       Lawyer @relation(fields: [userId], references: [id], onDelete: Cascade)
+    name         String
+    nbrDeContrat String
+    key          String
+}
+
+model Contrat {
+    id      String    @id @default(cuid())
+    userId  String
+    lawyer  Lawyer    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    type    String?
+    date    DateTime? @default(now())
+    content String?
+}
+
+model Notification {
+    id            String    @id @default(cuid())
+    userId        String
+    lawyer        Lawyer?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    content       String?
+    TimeToReceive DateTime? @default(now())
+    vue           Boolean?
+    type          String
+    key           String?
+}
+
+model ClientNotification {
+    id            String    @id @default(cuid())
+    userId        String
+    client        Client    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    content       String?
+    TimeToReceive DateTime? @default(now())
+    vue           Boolean?
+    type          String
+    key           String
+}
+
+model Contact {
+    id      String   @id @default(cuid())
+    userId  String
+    lawyer  Lawyer?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+    name    String
+    contenu String
+    date    DateTime @default(now())
+    key     String
+}
+
+model ClientContact {
+    id      String   @id @default(cuid())
+    userId  String
+    client  Client?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+    name    String
+    contenu String
+    date    DateTime @default(now())
+    key     String
+}
+
+model Diplome {
+    id     String  @id @default(cuid())
+    userId String
+    lawyer Lawyer? @relation(fields: [userId], references: [id], onDelete: Cascade)
+    ecole  String
+    anne   String
+    nom    String
+}
+
+model Experience {
+    id     String  @id @default(cuid())
+    userId String
+    poste  String
+    durant String
+    lawyer Lawyer? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Calendar {
+    id String @id @default(cuid())
+
+    userId String
+    client String
+    moment DateTime
+    lawyer Lawyer?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Necessary for Next auth
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? @db.Text
+    access_token             String? // @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? // @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+    id        Int      @id @default(autoincrement())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    @@index([name])
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
