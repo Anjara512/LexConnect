@@ -137,7 +137,7 @@ export default function Page() {
                     :
                     <span>
 
-                      {el.name}vous a envoyer une contrat
+                      {el.name}vous a envoyer une demande de  contrat
                     </span>}
                   <span>
                     {new Date(String(el.TimeToReceive)).toLocaleTimeString()}

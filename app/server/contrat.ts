@@ -96,3 +96,28 @@ export async function ResolveContrate(sessionId:string,el:string) {
   
   return "tache effectué"
 }
+
+export async function RejectContrat(sessionId:string,id:string){
+  const lawyerToRefesue=await prisma.lawyer.findFirst({
+    where:{userId:sessionId}
+  });
+  if(!lawyerToRefesue)throw new Error("vous nêtes pas authentifier");
+
+  const clientToRefuse=await prisma.client.findFirst({
+    where:{id:id}
+  });
+  if(!clientToRefuse)throw new Error('le client introuvables');
+  const  addNotificationRefuse=await prisma.clientNotification.create({
+    data:{
+      content:"refuser votre contrat",
+      type:"contrat",
+      key:lawyerToRefesue?.id as string ,
+      vue:false,
+      userId: clientToRefuse?.id  as string,
+      name:lawyerToRefesue?.name as string
+    }
+  });
+  if(!addNotificationRefuse)throw new Error("impossible d'ajouter le contenu");
+  return "succés"
+
+}

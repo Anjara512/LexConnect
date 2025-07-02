@@ -181,7 +181,7 @@ export default function Page() {
         <span>
           {currentChat?.name}
         </span>
-        <div className={cn("bg-slate-900 w-full flex flex-col gap-2 overflow-x-scroll  h-80 rounded-md", {
+        <div style={{ scrollbarWidth: "none" }} className={cn("bg-slate-900 w-full flex flex-col gap-2 overflow-x-scroll  h-80 rounded-md", {
           "bg-slate-200": theme !== "dark"
         })}>
           {currentChat ? (mgs?.map((el, index) => (
