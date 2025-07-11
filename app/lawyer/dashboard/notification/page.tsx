@@ -129,7 +129,11 @@ export default function Page() {
 
                     <span>
 
-                      {el.name} veux rejoindre votre communauté
+                      <b className="hover:underline cursor-pointer ">
+                        {el.name}
+                      </b>
+
+                      veux rejoindre votre communauté
                     </span>
 
 
@@ -137,7 +141,11 @@ export default function Page() {
                     :
                     <span>
 
-                      {el.name}vous a envoyer une demande de  contrat
+                      <b className="hover:underline cursor-pointer mr-2">
+                        {el.name}
+                      </b>
+
+                      vous a envoyer une demande de  contrat
                     </span>}
                   <span>
                     {new Date(String(el.TimeToReceive)).toLocaleTimeString()}

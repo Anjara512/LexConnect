@@ -1,28 +1,28 @@
 "use client";
-import { Card } from "@/components/ui/card";
+
+import { getUserName } from "@/app/server/getLawyerInfo";
+import { DisplayCardsDemo } from "@/components/box";
+import DisplayCards from "@/components/ui/display-cards";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
-  const theTitle = [
-    "tu est au bonne endroit ",
-    "si tu veux reussir dans ton domaine",
-    "nous somme la pour t'aider",
-  ];
+  const { data: session } = useSession();
+
+  const sessionId = session?.user?.id;
+
+  const { data } = useQuery({
+    queryKey: ["name"],
+    queryFn: async () => await getUserName(String(sessionId))
+  })
+
   return (
-    <div className="flex items-center justify-center h-screen  flex-col w-full">
-      <Card className=" flex flex-col w-3/4 h-max bg-gradient-to-l from-cyan-500 to-purple-800">
-        {theTitle.map((el, index) => (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 * index }}
-            className="uppercase font-medium text-lg "
-            key={index}
-          >
-            {el}
-          </motion.p>
-        ))}
-      </Card>
+    <div className="flex items-center flex-row  justify-center h-screen   w-full">
+
+      <DisplayCardsDemo >
+
+      </DisplayCardsDemo>
     </div>
   );
 }
